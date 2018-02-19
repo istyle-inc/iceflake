@@ -10,7 +10,7 @@ const (
 	WorkerIdBits                   = 10
 	SequenceBits                   = 12
 	InitialSequentialNumber uint64 = 1
-	DecimalNumberType              = 10
+	DecimalRadix10                 = 10
 )
 
 var (
@@ -53,7 +53,7 @@ func (g *Generator) Generate() string {
 
 	uuid := strconv.FormatUint(
 		(g.Timestamp<<(WorkerIdBits+SequenceBits))|g.WorkerId<<SequenceBits|g.SequentialNumber,
-		DecimalNumberType,
+		DecimalRadix10,
 	)
 	return uuid
 }
