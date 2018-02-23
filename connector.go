@@ -50,8 +50,6 @@ func (c *Connector) AcceptListener() error {
 			conn.Close()
 		}(conn, []byte(uuid))
 	}
-
-	return nil
 }
 
 func (c *Connector) SignalTearDown() {
