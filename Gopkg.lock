@@ -8,6 +8,18 @@
   version = "v1.0.0"
 
 [[projects]]
+  name = "github.com/koron/go-dproxy"
+  packages = ["."]
+  revision = "009e1192eaace40a885c5b93c37613b3cae820d6"
+  version = "v1.1"
+
+[[projects]]
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
+
+[[projects]]
   name = "go.uber.org/atomic"
   packages = ["."]
   revision = "8474b86a5a6f79c443ce4b2992817ff32cf208b8"
@@ -35,6 +47,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1e0b796517d4446d0636ca9b460078035b53e52d53177190942055876b93f23c"
+  inputs-digest = "e1ec21fb1da0b3847407ca03fa5c3362de143228b8c150abdc59634ded448909"
   solver-name = "gps-cdcl"
   solver-version = 1

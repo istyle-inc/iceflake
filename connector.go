@@ -1,55 +1,60 @@
 package main
 
 import (
-	"fmt"
 	"net"
 	"os"
-	"os/signal"
-
-	"go.uber.org/zap"
 )
 
-const (
-	SocketFilePath    = "/tmp/iceflake-worker-%d.sock"
-	ListenNetworkType = "unix"
-)
+type Connector struct {
+	SocketFilePath string
+	ListenType     string
+	Listener       net.Listener
+	Generator      *Generator
+}
 
-func socketConnect(workerId int64) {
-	f := fmt.Sprintf(SocketFilePath, workerId)
-	defer os.Remove(f)
+func NewConnector(socketFilePath, listenType string, generator *Generator) *Connector {
+	return &Connector{
+		SocketFilePath: socketFilePath,
+		ListenType:     listenType,
+		Generator:      generator,
+	}
+}
 
-	listener, err := net.Listen(ListenNetworkType, f)
+func (c *Connector) Listen() error {
+	l, err := net.Listen(c.ListenType, c.SocketFilePath)
 	if err != nil {
-		logger.Fatal("Error: ", zap.Error(err))
+		return err
 	}
 
-	// Shutdown when notice interrupt signal
-	signalCh := make(chan os.Signal, 1)
-	signal.Notify(signalCh, os.Interrupt)
-	go signalHandler(listener, signalCh)
+	c.Listener = l
+	return nil
+}
 
+func (c *Connector) AcceptListener() error {
 	// Listen socket
 	for {
-		conn, err := listener.Accept()
+		conn, err := c.Listener.Accept()
 		if err != nil {
-			os.Remove(f)
-			logger.Fatal("Error: ", zap.Error(err))
+			return err
 		}
 
-		go sendUUID(uint64(workerId), conn)
+		// Process after accepted
+		uuid, err := c.Generator.Generate()
+		if err != nil {
+			return err
+		}
+
+		// Send UUID
+		go func(conn net.Conn, uuid []byte) {
+			conn.Write(uuid)
+			conn.Close()
+		}(conn, []byte(uuid))
 	}
+
+	return nil
 }
 
-func signalHandler(listener net.Listener, s chan os.Signal) {
-	sig := <-s
-	sLogger.Infof("Catch signal %s: Shutting down.\n", sig)
-	listener.Close()
-	os.Exit(0)
-}
-
-func sendUUID(workerId uint64, conn net.Conn) {
-	g := NewGenerator(workerId)
-	uuid := g.Generate()
-	conn.Write([]byte(uuid))
-	conn.Close()
+func (c *Connector) SignalTearDown() {
+	c.Listener.Close()
+	os.Remove(c.SocketFilePath)
 }
