@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"testing"
 
-	"iceflake/foundation"
+	"github.com/istyle-inc/iceflake/foundation"
 
 	"github.com/koron/go-dproxy"
 	"go.uber.org/zap"

@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 
-	"iceflake/foundation"
+	"github.com/istyle-inc/iceflake/foundation"
 
 	"go.uber.org/zap"
 )
