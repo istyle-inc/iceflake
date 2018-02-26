@@ -20,6 +20,12 @@
   version = "v0.8.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/syossan27/tebata"
+  packages = ["."]
+  revision = "0c0f6c5b5df2007f8bcd0648690353f8fad82d6a"
+
+[[projects]]
   name = "go.uber.org/atomic"
   packages = ["."]
   revision = "8474b86a5a6f79c443ce4b2992817ff32cf208b8"
@@ -47,6 +53,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "cf64a4bb1d41fe69b8c7e3e138e8671695caa2de73faadcb95ee971400348325"
+  inputs-digest = "4f2c5a577c9babedd2158dbf783a4059652c900920e5733727747473a72e0685"
   solver-name = "gps-cdcl"
   solver-version = 1

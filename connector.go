@@ -3,6 +3,8 @@ package main
 import (
 	"net"
 	"os"
+
+	"github.com/istyle-inc/iceflake/foundation"
 )
 
 type Connector struct {
@@ -53,6 +55,8 @@ func (c *Connector) AcceptListener() error {
 }
 
 func (c *Connector) SignalTearDown() {
+	foundation.SLogger.Infof("Shutting down.\n")
 	c.Listener.Close()
 	os.Remove(c.SocketFilePath)
+	os.Exit(0)
 }
