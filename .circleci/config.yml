@@ -34,20 +34,20 @@ workflows:
   without_release:
     jobs:
       - test:
-        filters:
-          tags:
-            ignore: /^v.*/
+          filters:
+            tags:
+              ignore: /^v.*/
   with_release:
     jobs:
       - test:
-        filters:
-          branches:
-            ignore: /.*/
-          tags:
-            only: /^v.*/
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
       - build:
-        filters:
-          branches:
-            ignore: /.*/
-          tags:
-            only: /^v.*/
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
