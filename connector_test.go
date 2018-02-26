@@ -84,14 +84,10 @@ func TestConnector_AcceptListener(t *testing.T) {
 
 	tbt := tebata.New(syscall.SIGINT, syscall.SIGKILL)
 	tbt.Reserve(
-		func(signal os.Signal) {
+		func() {
 			foundation.SLogger.Infof("Shutting down.\n")
-			if signal != os.Interrupt {
-				t.Error("Catch illegal signal")
-			}
 			done <- 1
 		},
-		os.Interrupt,
 	)
 	go connector.AcceptListener()
 	p, err := os.FindProcess(os.Getpid())
