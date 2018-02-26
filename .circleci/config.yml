@@ -17,6 +17,7 @@ jobs:
       - run: go test -race -test.v ./...
       - run: go test -race -cover -v -coverprofile=./coverage.out
       - run: goveralls -coverprofile=./coverage.out -service=circle-ci -repotoken=$COVERALLS_TOKEN
+
   build:
     docker:
       - image: circleci/golang:1.10
@@ -27,23 +28,24 @@ jobs:
       - run: go get -u github.com/goreleaser/goreleaser
       - run: dep ensure -v
       - run: goreleaser --rm-dist
+
 workflows:
   version: 2
-  withoutRelease:
+  without-release:
     jobs:
-      - test
+      - test:
         filters:
           tags:
             ignore: /^v.*/
-  withRelease:
+  with-release:
     jobs:
-      - test
+      - test:
         filters:
           branches:
             ignore: /.*/
           tags:
             only: /^v.*/
-      - build
+      - build:
         filters:
           branches:
             ignore: /.*/
