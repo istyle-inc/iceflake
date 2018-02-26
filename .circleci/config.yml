@@ -1,23 +1,51 @@
 version: 2
 jobs:
-  build:
+  test:
     docker:
       - image: circleci/golang:1.10
-
     working_directory: /go/src/github.com/istyle-inc/iceflake
     steps:
       - checkout
-
       - run: go get -u github.com/golang/lint/golint
       - run: go get -u github.com/axw/gocov/gocov
       - run: go get -u github.com/mattn/goveralls
       - run: test -z "$(gofmt -s -l . | tee /dev/stderr)"
-
       # Setup dep
       - run: go get -u github.com/golang/dep/cmd/dep
       - run: dep ensure -v
-
       - run: go vet ./...
       - run: go test -race -test.v ./...
       - run: go test -race -cover -v -coverprofile=./coverage.out
       - run: goveralls -coverprofile=./coverage.out -service=circle-ci -repotoken=$COVERALLS_TOKEN
+  build:
+    docker:
+      - image: circleci/golang:1.10
+    working_directory: /go/src/github.com/istyle-inc/iceflake
+    steps:
+      - checkout
+      - run: go get -u github.com/golang/dep/cmd/dep
+      - run: go get -u github.com/goreleaser/goreleaser
+      - run: dep ensure -v
+      - run: goreleaser --rm-dist
+workflows:
+  version: 2
+  withoutRelease:
+    jobs:
+      - test
+        filters:
+          tags:
+            ignore: /^v.*/
+  withRelease:
+    jobs:
+      - test
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v.*/
+      - build
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^v.*/
