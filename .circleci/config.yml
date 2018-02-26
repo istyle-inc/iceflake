@@ -31,13 +31,13 @@ jobs:
 
 workflows:
   version: 2
-  without-release:
+  without_release:
     jobs:
       - test:
         filters:
           tags:
             ignore: /^v.*/
-  with-release:
+  with_release:
     jobs:
       - test:
         filters:
