@@ -38,7 +38,7 @@ func main() {
 	}
 
 	// Catch interrupt signal for stop listen
-	t := tebata.New(syscall.SIGINT, syscall.SIGKILL)
+	t := tebata.New(syscall.SIGINT, syscall.SIGKILL, syscall.SIGHUP)
 	t.Reserve(connector.SignalTearDown)
 
 	err = connector.AcceptListener()
