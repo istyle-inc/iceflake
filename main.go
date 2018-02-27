@@ -6,6 +6,9 @@ import (
 
 	"github.com/istyle-inc/iceflake/foundation"
 
+	"syscall"
+
+	"github.com/syossan27/tebata"
 	"go.uber.org/zap"
 )
 
@@ -33,7 +36,11 @@ func main() {
 	if err != nil {
 		foundation.Logger.Fatal("Error: ", zap.Error(err))
 	}
-	foundation.SignalHandling(connector) // Catch interrupt signal for stop listen
+
+	// Catch interrupt signal for stop listen
+	t := tebata.New(syscall.SIGINT, syscall.SIGKILL)
+	t.Reserve(connector.SignalTearDown)
+
 	err = connector.AcceptListener()
 	if err != nil {
 		foundation.Logger.Fatal("Error: ", zap.Error(err))

@@ -11,6 +11,7 @@ import (
 	"github.com/istyle-inc/iceflake/foundation"
 
 	"github.com/koron/go-dproxy"
+	"github.com/syossan27/tebata"
 	"go.uber.org/zap"
 )
 
@@ -31,6 +32,8 @@ func newConnector() *Connector {
 }
 
 func TestNewConnector(t *testing.T) {
+	defer os.Remove(testSocketFilePath)
+
 	generator := NewGenerator(testWorkerId)
 
 	connector := &Connector{
@@ -51,6 +54,8 @@ func TestNewConnector(t *testing.T) {
 }
 
 func TestConnector_Listen(t *testing.T) {
+	defer os.Remove(testSocketFilePath)
+
 	err := connector.Listen()
 	if err != nil {
 		t.Error("Fail connector listen: ", err)
@@ -59,14 +64,10 @@ func TestConnector_Listen(t *testing.T) {
 }
 
 func TestConnector_AcceptListener(t *testing.T) {
+	defer os.Remove(testSocketFilePath)
+
 	// Override exit function used for signalHandler
 	done := make(chan int, 1)
-	foundation.Exit = func(signal int) {
-		if signal != 0 {
-			t.Error("Catch illegal signal")
-		}
-		done <- 1
-	}
 
 	// Change zap output to none
 	stderr := os.Stderr
@@ -81,9 +82,19 @@ func TestConnector_AcceptListener(t *testing.T) {
 		t.Error("Fail connector listen: ", err)
 	}
 
-	foundation.SignalHandling(connector)
+	tbt := tebata.New(syscall.SIGINT, syscall.SIGKILL)
+	tbt.Reserve(
+		func() {
+			foundation.SLogger.Infof("Shutting down.\n")
+			done <- 1
+		},
+	)
 	go connector.AcceptListener()
-	foundation.SignalCh <- syscall.SIGINT // Send interrupt signal
+	p, err := os.FindProcess(os.Getpid())
+	if err != nil {
+		t.Error("Fail find process: ", err)
+	}
+	p.Signal(os.Interrupt)
 
 	// Waiting done signalHandler
 	<-done
@@ -101,7 +112,7 @@ func TestConnector_AcceptListener(t *testing.T) {
 	var stdOutJSON interface{}
 	json.Unmarshal(buf.Bytes(), &stdOutJSON)
 	msg, err := dproxy.New(stdOutJSON).M("msg").String()
-	if msg != "Catch signal interrupt: Shutting down.\n" {
+	if msg != "Shutting down.\n" {
 		t.Error("Invalid output")
 	}
 }
