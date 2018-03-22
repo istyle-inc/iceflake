@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net"
 	"os"
 
@@ -48,7 +49,10 @@ func (c *Connector) AcceptListener() error {
 
 		// Send UUID
 		go func(conn net.Conn, uuid []byte) {
-			conn.Write(uuid)
+			_, err := conn.Write(uuid)
+			if err != nil {
+				log.Println("Error: ", err)
+			}
 			conn.Close()
 		}(conn, []byte(uuid))
 	}
