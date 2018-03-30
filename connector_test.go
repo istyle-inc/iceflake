@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	testSocketFilePath        = "/tmp/iceflake-test.sock"
+	testSocketFilePath        = "/run/iceflake-test.sock"
 	testListenType            = "unix"
 	testWorkerId       uint64 = 1
 	connector                 = newConnector()
