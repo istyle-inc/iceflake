@@ -7,6 +7,7 @@ func BenchmarkConnectIceFlake(b *testing.B) {
 	// get path from env. then check stat
 	path := os.Getenv("ICEFLAKE_SOCKETFILE_PATH")
 	_, err := os.Stat(path)
+	b.Log(path, err)
 	// if sock file doesn't exist or path is empty, skip this bench
 	if len(path) == 0 || err != nil {
 		b.Skip("could not find whether iceflake is running or not, skipped")
