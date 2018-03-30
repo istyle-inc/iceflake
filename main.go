@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 
+	"github.com/istyle-inc/iceflake/constantvalues"
 	"github.com/istyle-inc/iceflake/foundation"
 
 	"syscall"
@@ -13,12 +14,8 @@ import (
 
 var (
 	// Flags
-	workerIdOption   = flag.Int64("w", 1, "Setting worker id of iceflake")
-	socketPathOption = flag.String("s", "/run/iceflake-worker-1.sock", "Setting socket path")
-)
-
-const (
-	ListenType = "unix"
+	workerIDOption   = flag.Int64("w", constantvalues.DefaultWorkerID, "Setting worker id of iceflake")
+	socketPathOption = flag.String("s", constantvalues.DefaultSocketFilePath, "Setting socket path")
 )
 
 func main() {
@@ -27,8 +24,8 @@ func main() {
 
 	connector := NewConnector(
 		*socketPathOption,
-		ListenType,
-		NewGenerator(uint64(*workerIdOption)),
+		constantvalues.ListenType,
+		NewGenerator(uint64(*workerIDOption)),
 	)
 
 	err := connector.Listen()
