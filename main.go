@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 
 	"github.com/istyle-inc/iceflake/foundation"
 
@@ -14,12 +13,12 @@ import (
 
 var (
 	// Flags
-	workerIdOption = flag.Int64("w", 1, "Setting worker id of iceflake")
+	workerIdOption   = flag.Int64("w", 1, "Setting worker id of iceflake")
+	socketPathOption = flag.String("s", "/run/iceflake-worker-1.sock", "Setting socket path")
 )
 
 const (
-	SocketFilePath = "/tmp/iceflake-worker-%d.sock"
-	ListenType     = "unix"
+	ListenType = "unix"
 )
 
 func main() {
@@ -27,7 +26,7 @@ func main() {
 	flag.Parse()
 
 	connector := NewConnector(
-		fmt.Sprintf(SocketFilePath, *workerIdOption),
+		*socketPathOption,
 		ListenType,
 		NewGenerator(uint64(*workerIdOption)),
 	)
