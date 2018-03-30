@@ -18,7 +18,7 @@ var (
 )
 
 const (
-	SocketFilePath = "/tmp/iceflake-worker-%d.sock"
+	SocketFilePath = "/run/iceflake-worker-%d.sock"
 	ListenType     = "unix"
 )
 
