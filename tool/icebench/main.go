@@ -5,8 +5,6 @@ import (
 	"flag"
 	"log"
 	"net"
-
-	"github.com/k0kubun/pp"
 )
 
 var (
@@ -31,15 +29,11 @@ func connectIceFlake(socketPath string) (result string, err error) {
 	var c net.Conn
 	c, err = net.Dial(ListenType, socketPath)
 	if err != nil {
-		pp.Println("d", err)
 		return
 	}
-	defer func() { _ = c.Close() }()
-	_, err = c.Write([]byte{})
-	if err != nil {
-		pp.Println("w", err)
-		return
-	}
+	defer func() {
+		_ = c.Close()
+	}()
 	buf := make([]byte, 1024)
 	var n int
 	n, err = c.Read(buf)
@@ -47,7 +41,6 @@ func connectIceFlake(socketPath string) (result string, err error) {
 		err = errors.New("iceflake returned nothing")
 	}
 	if err != nil {
-		pp.Println("r", err)
 		return
 	}
 	return string(buf[:n]), nil

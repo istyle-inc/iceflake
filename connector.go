@@ -38,7 +38,8 @@ func (c *Connector) AcceptListener() error {
 	for {
 		conn, err := c.Listener.Accept()
 		if err != nil {
-			return err
+			log.Println("Error: ", err)
+			continue
 		}
 
 		// Process after accepted
@@ -49,11 +50,11 @@ func (c *Connector) AcceptListener() error {
 
 		// Send UUID
 		go func(conn net.Conn, uuid []byte) {
-			_, err := conn.Write(uuid)
+			defer conn.Close()
+			_, err := conn.Write([]byte(uuid))
 			if err != nil {
 				log.Println("Error: ", err)
 			}
-			conn.Close()
 		}(conn, []byte(uuid))
 	}
 }

@@ -1,7 +1,9 @@
 package main
 
-import "testing"
-import "os"
+import (
+	"os"
+	"testing"
+)
 
 func BenchmarkConnectIceFlake(b *testing.B) {
 	// get path from env. then check stat
@@ -9,14 +11,15 @@ func BenchmarkConnectIceFlake(b *testing.B) {
 	_, err := os.Stat(path)
 	// if sock file doesn't exist or path is empty, skip this bench
 	if len(path) == 0 || err != nil {
-		b.Skip("could not find whether iceflake is running or not, skipped")
+		b.Error("could not find whether iceflake is running or not, failed")
 	}
-
-	// Start bench
-	for i := 0; i < b.N; i++ {
-		_, err := connectIceFlake(path)
-		if err != nil {
-			b.Error(err)
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, err := connectIceFlake(path)
+			if err != nil {
+				b.Error("got failed: ", err)
+			}
 		}
-	}
+	})
 }
