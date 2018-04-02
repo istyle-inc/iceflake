@@ -55,3 +55,38 @@ func TestListen(t *testing.T) {
 		t.Error("result expected: ", expected, " but ", result.Id)
 	}
 }
+
+func BenchmarkListen(b *testing.B) {
+
+	tmpDir, _ := ioutil.TempDir("", "iceflake")
+	defer os.RemoveAll(tmpDir)
+	fp := filepath.Join(tmpDir, "iceflake.sock")
+	o := &Option{
+		ListenerType: "unix",
+		WorkerID:     1,
+		Addr:         fp,
+		BaseTime:     time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC),
+	}
+
+	ice, err := New(o)
+	if err != nil {
+		b.Error("error: ", err)
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go ice.Listen(ctx)
+	<-ice.Preparing()
+	cli := ic.NewClient("unix", fp)
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			result, err := cli.Get()
+			if err != nil {
+				b.Error("error: ", err)
+			}
+			if result.Id == uint64(0) {
+				b.Error("result is no way to be zero")
+			}
+		}
+	})
+}

@@ -1,14 +1,14 @@
 package app
 
 import (
-	"bufio"
 	"context"
-	"log"
 	"net"
 	"time"
 
 	"github.com/golang/protobuf/proto"
+	"github.com/istyle-inc/iceflake/foundation"
 	"github.com/istyle-inc/iceflake/pbdef"
+	"go.uber.org/zap"
 )
 
 // Option struct hold option value
@@ -63,7 +63,7 @@ func (i *IceFlake) Listen(ctx context.Context) error {
 	go func() {
 		<-ctx.Done()
 		if err := i.Close(); err != nil {
-			log.Printf("error occurred when closing: %s", err)
+			foundation.Logger.Error("error occurred when closing", zap.Error(err))
 		}
 	}()
 	close(i.preparing)
@@ -72,10 +72,10 @@ func (i *IceFlake) Listen(ctx context.Context) error {
 		if err != nil {
 			select {
 			case <-ctx.Done():
-				log.Printf("Shutting down listener")
+				foundation.Logger.Info("Shutting down listener")
 				return nil
 			default:
-				log.Printf("error occurred while processing: %s", err)
+				foundation.Logger.Error("error occurred while processing", zap.Error(err))
 				return err
 			}
 		}
@@ -89,24 +89,18 @@ func (i *IceFlake) handle(ctx context.Context, conn net.Conn) {
 	go func() {
 		<-innerCtx.Done()
 		_ = conn.Close()
-		log.Printf("connection closed")
+		foundation.Logger.Info("connection closed")
 	}()
 	id, err := i.Generate()
 	if err != nil {
-		log.Printf("error with generation id: %s", err)
+		foundation.Logger.Error("error with generation id", zap.Error(err))
 		return
 	}
-	writer := bufio.NewWriter(conn)
 	flake := pbdef.IceFlake{Id: id}
 	data, err := proto.Marshal(&flake)
-	_, err = writer.Write(data)
-	// _, err = fmt.Fprint(writer, id)
+	_, err = conn.Write(data)
 	if err != nil {
-		log.Printf("error with writing to stream: %s", err)
-		return
-	}
-	if err = writer.Flush(); err != nil {
-		log.Printf("error with flushing stream: %s", err)
+		foundation.Logger.Error("error with writing to strea", zap.Error(err))
 		return
 	}
 }
