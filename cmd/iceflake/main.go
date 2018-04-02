@@ -28,12 +28,15 @@ func main() {
 		Addr:         *socketPathOption,
 		WorkerID:     uint64(*workerIDOption),
 	})
+	if err != nil {
+		foundation.Logger.Fatal("Error: ", zap.Error(err))
+		cancel()
+		os.Exit(1)
+	}
 	t := tebata.New(syscall.SIGINT, syscall.SIGKILL, syscall.SIGHUP, syscall.SIGTERM)
 	t.Reserve(cancel)
-	if err != nil {
-		return
-	}
 	if err := app.Listen(ctx); err != nil {
 		foundation.Logger.Fatal("Error: ", zap.Error(err))
 	}
+	os.Exit(0)
 }
