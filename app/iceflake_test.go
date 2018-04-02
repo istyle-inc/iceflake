@@ -57,7 +57,6 @@ func TestListen(t *testing.T) {
 }
 
 func BenchmarkListen(b *testing.B) {
-
 	tmpDir, _ := ioutil.TempDir("", "iceflake")
 	defer os.RemoveAll(tmpDir)
 	fp := filepath.Join(tmpDir, "iceflake.sock")
