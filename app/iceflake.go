@@ -4,10 +4,9 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"log"
 	"net"
 	"time"
-
-	"github.com/apex/log"
 )
 
 // Option struct hold option value
@@ -15,7 +14,7 @@ type Option struct {
 	// ListenerType listen tcp, unix or else
 	ListenerType string
 	// WorkerID given worker-id to this app instance
-	WorkerID int
+	WorkerID uint64
 	// Addr tcp address or unix socket path
 	Addr string
 	// BaseTime
@@ -45,7 +44,7 @@ func New(o *Option) (*IceFlake, error) {
 	}
 	return &IceFlake{
 		Listener:    l,
-		IDGenerator: NewIDGenerator(o.WorkerID),
+		IDGenerator: NewIDGenerator(o.WorkerID, o.BaseTime),
 		baseTime:    o.BaseTime,
 		option:      o,
 		preparing:   make(chan interface{}),
@@ -62,7 +61,7 @@ func (i *IceFlake) Listen(ctx context.Context) error {
 	go func() {
 		<-ctx.Done()
 		if err := i.Close(); err != nil {
-			log.Errorf("error occurred when closing: %s", err)
+			log.Printf("error occurred when closing: %s", err)
 		}
 	}()
 	close(i.preparing)
@@ -71,10 +70,10 @@ func (i *IceFlake) Listen(ctx context.Context) error {
 		if err != nil {
 			select {
 			case <-ctx.Done():
-				log.Info("Shutting down listener")
+				log.Printf("Shutting down listener")
 				return nil
 			default:
-				log.Errorf("error occurred while processing: %s", err)
+				log.Printf("error occurred while processing: %s", err)
 				return err
 			}
 		}
@@ -88,21 +87,21 @@ func (i *IceFlake) handle(ctx context.Context, conn net.Conn) {
 	go func() {
 		<-innerCtx.Done()
 		_ = conn.Close()
-		log.Info("connection closed")
+		log.Printf("connection closed")
 	}()
 	id, err := i.Generate()
 	if err != nil {
-		log.Errorf("error with generation id: %s", err)
+		log.Printf("error with generation id: %s", err)
 		return
 	}
 	writer := bufio.NewWriter(conn)
 	_, err = fmt.Fprint(writer, id)
 	if err != nil {
-		log.Errorf("error with writing to stream: %s", err)
+		log.Printf("error with writing to stream: %s", err)
 		return
 	}
 	if err = writer.Flush(); err != nil {
-		log.Errorf("error with flushing stream: %s", err)
+		log.Printf("error with flushing stream: %s", err)
 		return
 	}
 }
