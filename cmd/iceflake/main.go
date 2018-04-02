@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"syscall"
+	"time"
 
 	"github.com/istyle-inc/iceflake/app"
 	"github.com/istyle-inc/iceflake/constantvalues"
@@ -20,6 +21,7 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	app, err := app.New(&app.Option{
+		BaseTime:     time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC),
 		ListenerType: "unix",
 		Addr:         *socketPathOption,
 		WorkerID:     uint64(*workerIDOption),
