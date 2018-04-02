@@ -3,10 +3,12 @@ package app
 import (
 	"bufio"
 	"context"
-	"fmt"
 	"log"
 	"net"
 	"time"
+
+	"github.com/golang/protobuf/proto"
+	"github.com/istyle-inc/iceflake/pbdef"
 )
 
 // Option struct hold option value
@@ -95,7 +97,10 @@ func (i *IceFlake) handle(ctx context.Context, conn net.Conn) {
 		return
 	}
 	writer := bufio.NewWriter(conn)
-	_, err = fmt.Fprint(writer, id)
+	flake := pbdef.IceFlake{Id: id}
+	data, err := proto.Marshal(&flake)
+	_, err = writer.Write(data)
+	// _, err = fmt.Fprint(writer, id)
 	if err != nil {
 		log.Printf("error with writing to stream: %s", err)
 		return
