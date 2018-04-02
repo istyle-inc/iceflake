@@ -52,7 +52,7 @@ func (g *IceFlakeGenerator) Generate() (uint64, error) {
 	case ts < g.lastTS:
 		return 0, errors.New("system clock was rolled back")
 	case ts == g.lastTS:
-		g.seq++
+		g.seq = g.seq + 1
 	case ts > g.lastTS:
 		g.seq = initialSequentialNumber
 	}
