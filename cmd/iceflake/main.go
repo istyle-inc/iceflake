@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"os"
 	"syscall"
 	"time"
 
@@ -17,6 +18,7 @@ func main() {
 	workerIDOption := flag.Int64("w", constantvalues.DefaultWorkerID, "Setting worker id of iceflake")
 	socketPathOption := flag.String("s", constantvalues.DefaultSocketFilePath, "Setting socket path")
 	defer foundation.Logger.Sync()
+	defer os.Remove(*socketPathOption)
 	flag.Parse()
 
 	ctx, cancel := context.WithCancel(context.Background())
