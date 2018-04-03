@@ -14,6 +14,12 @@
   version = "v1.0.0"
 
 [[projects]]
+  name = "github.com/koron/go-dproxy"
+  packages = ["."]
+  revision = "009e1192eaace40a885c5b93c37613b3cae820d6"
+  version = "v1.1"
+
+[[projects]]
   branch = "master"
   name = "github.com/syossan27/tebata"
   packages = ["."]
@@ -47,6 +53,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1c0be4ac5fb07f92ef51fa8424e057f5b893e0540d51ca0988859161867a290d"
+  inputs-digest = "9aa64d594c9b978b23356fdf753987735c1409e6fa652f00bcb98d5a5dac3e08"
   solver-name = "gps-cdcl"
   solver-version = 1

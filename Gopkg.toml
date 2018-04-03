@@ -24,6 +24,7 @@
 #   go-tests = true
 #   unused-packages = true
 
+required = ["github.com/koron/go-dproxy"]
 
 [[constraint]]
   name = "github.com/golang/protobuf"
