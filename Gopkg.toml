@@ -43,3 +43,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/syossan27/tebata"
+
+[[constraint]]
+  name = "github.com/golang/mock"
+  version = "1.0.0"
