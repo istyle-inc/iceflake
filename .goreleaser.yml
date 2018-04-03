@@ -1,6 +1,7 @@
 builds:
-  - main: ./cmd/iceflake/main.go
-  - binary: iceflake
+  - 
+    main: ./cmd/iceflake/main.go
+    binary: iceflake
     goos:
       - windows
       - darwin
