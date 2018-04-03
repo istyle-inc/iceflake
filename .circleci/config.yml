@@ -6,6 +6,7 @@ jobs:
     working_directory: /go/src/github.com/istyle-inc/iceflake
     steps:
       - checkout
+      - run: go get -u github.com/modocache/gover
       - run: go get -u github.com/golang/lint/golint
       - run: go get -u github.com/axw/gocov/gocov
       - run: go get -u github.com/mattn/goveralls
@@ -15,8 +16,10 @@ jobs:
       - run: dep ensure -v
       - run: go vet ./...
       - run: go test -race -test.v ./...
-      - run: go test -race -cover -v -coverprofile=./coverage.out
-      - run: goveralls -coverprofile=./coverage.out -service=circle-ci -repotoken=$COVERALLS_TOKEN
+      - run: go test -race -cover -v -coverprofile=./client.coverprofile github.com/istyle-inc/iceflake/client/iceflake
+      - run: go test -race -cover -v -coverprofile=./app.coverprofile github.com/istyle-inc/iceflake/app
+      - run: gover
+      - run: goveralls -coverprofile=./gover.coverprofile -service=circle-ci -repotoken=$COVERALLS_TOKEN
 
   build:
     docker:
