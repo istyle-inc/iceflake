@@ -1,0 +1,26 @@
+hash: c48168acbdbf975e02c88ff52a02cae45defdb07bdf61ca8372edc072ccd9215
+updated: 2018-04-03T14:42:44.37384+09:00
+imports:
+- name: github.com/golang/mock
+  version: 13f360950a79f5864a972c786a10a50e44b69541
+  subpackages:
+  - gomock
+- name: github.com/golang/protobuf
+  version: 925541529c1fa6821df4e44ce2723319eb2be768
+  subpackages:
+  - proto
+- name: github.com/syossan27/tebata
+  version: a31f6c2caec0202898558dce1305fe84c95797c0
+- name: go.uber.org/atomic
+  version: 8474b86a5a6f79c443ce4b2992817ff32cf208b8
+- name: go.uber.org/multierr
+  version: 3c4937480c32f4c13a875a1829af76c98ca3d40a
+- name: go.uber.org/zap
+  version: 35aad584952c3e7020db7b839f6b102de6271f89
+  subpackages:
+  - buffer
+  - internal/bufferpool
+  - internal/color
+  - internal/exit
+  - zapcore
+testImports: []

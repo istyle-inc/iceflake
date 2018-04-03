@@ -1,0 +1,13 @@
+package: github.com/istyle-inc/iceflake
+import:
+- package: github.com/golang/mock
+  version: ^1.0.0
+  subpackages:
+  - gomock
+- package: github.com/golang/protobuf
+  version: ^1.0.0
+  subpackages:
+  - proto
+- package: github.com/syossan27/tebata
+- package: go.uber.org/zap
+  version: ^1.7.1
