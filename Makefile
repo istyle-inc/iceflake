@@ -16,4 +16,4 @@ build:
 	goreleaser 
 
 bench: 
-	go test -bench Benchmark
+	go test -benchmem -bench Benchmark github.com/istyle-inc/iceflake/app
