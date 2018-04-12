@@ -6,7 +6,7 @@ pb-compile:
 	protoc --go_out=${GOPATH}/src protofiles/uniqueid.proto
 
 run:
-	go run main.go generator.go connector.go -w 1 -s $(ICEFLAKE_SOCKETFILE_PATH)
+	go run cmd/iceflake/*.go -w 1 -s $(ICEFLAKE_SOCKETFILE_PATH)
 
 install-tools:
 	go get -u github.com/goreleaser/goreleaser
