@@ -70,7 +70,7 @@ func TestIceFlakeGenerator_Generate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			g := DefaultGenerator{
+			g := GeneratorService{
 				w:        tt.fields.w,
 				baseTime: tt.fields.baseTime,
 				lastTS:   tt.fields.lastTS,
@@ -104,7 +104,7 @@ func TestNewIDGenerator(t *testing.T) {
 				workerID: 1,
 				baseTime: time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
-			want: &DefaultGenerator{
+			want: &GeneratorService{
 				w:        1,
 				baseTime: time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC),
 				lastTS:   0,
