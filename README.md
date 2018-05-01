@@ -11,7 +11,7 @@ data are transferred using [Protocol Buffer](https://developers.google.com/proto
 ## Usage
 
 ### IceFlake Server
-You can download from release page or `go get -u github.com/istyle-inc/iceflake`
+You can download from release page or `go get -u github.com/istyle-inc/iceflake/...`
 
 ```
 $ iceflake -w 1 -s YOUR_SOCKET_FILE_PATH
@@ -24,7 +24,7 @@ Also you can use through this package.
 So, execute
 
 ```
-go get -u github.com/istyle-inc/iceflake
+go get -u github.com/istyle-inc/iceflake/...
 ```
 
 and here's a client code example
