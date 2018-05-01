@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/proto"
+	"github.com/istyle-inc/iceflake"
 	"github.com/istyle-inc/iceflake/foundation"
 	"github.com/istyle-inc/iceflake/pbdef"
 	"go.uber.org/zap"
@@ -27,8 +28,8 @@ type Option struct {
 type IceFlake struct {
 	// Listener instance of net.Listener implementation
 	net.Listener
-	// IDGenerator Implant IDGenerator
-	IDGenerator
+	// iceflake.Generator Implant IDGenerator
+	iceflake.Generator
 	preparing chan interface{}
 	baseTime  time.Time
 	option    *Option
@@ -45,11 +46,11 @@ func New(o *Option) (*IceFlake, error) {
 		return nil, err
 	}
 	return &IceFlake{
-		Listener:    l,
-		IDGenerator: NewIDGenerator(o.WorkerID, o.BaseTime),
-		baseTime:    o.BaseTime,
-		option:      o,
-		preparing:   make(chan interface{}),
+		Listener:  l,
+		Generator: iceflake.New(o.WorkerID, o.BaseTime),
+		baseTime:  o.BaseTime,
+		option:    o,
+		preparing: make(chan interface{}),
 	}, nil
 }
 
@@ -97,10 +98,10 @@ func (i *IceFlake) handle(ctx context.Context, conn net.Conn) {
 		return
 	}
 	flake := pbdef.IceFlake{Id: id}
-	data, err := proto.Marshal(&flake)
+	data, _ := proto.Marshal(&flake)
 	_, err = conn.Write(data)
 	if err != nil {
-		foundation.Logger.Error("error with writing to strea", zap.Error(err))
+		foundation.Logger.Error("error with writing to stream", zap.Error(err))
 		return
 	}
 }

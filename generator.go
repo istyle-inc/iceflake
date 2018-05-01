@@ -1,4 +1,4 @@
-package app
+package iceflake
 
 import (
 	"errors"
@@ -8,8 +8,8 @@ import (
 	"github.com/istyle-inc/iceflake/foundation"
 )
 
-// IDGenerator interface of generator generates each Unique ID
-type IDGenerator interface {
+// Generator interface of generator generates each Unique ID
+type Generator interface {
 	Generate() (uint64, error)
 }
 
@@ -19,12 +19,8 @@ const (
 	initialSequentialNumber = 1
 )
 
-var (
-	sequentialNumber uint64 = 1
-)
-
-// IceFlakeGenerator local implement of IDGenerator
-type IceFlakeGenerator struct {
+// DefaultGenerator local implement of Generator
+type DefaultGenerator struct {
 	w        uint64
 	baseTime time.Time
 	lastTS   uint64
@@ -32,9 +28,9 @@ type IceFlakeGenerator struct {
 	gate     sync.Mutex
 }
 
-// NewIDGenerator return new IDGenerator instance
-func NewIDGenerator(workerID uint64, baseTime time.Time) IDGenerator {
-	return &IceFlakeGenerator{
+// New return new Generator instance
+func New(workerID uint64, baseTime time.Time) Generator {
+	return &DefaultGenerator{
 		w:        workerID,
 		baseTime: baseTime,
 		lastTS:   0,
@@ -43,7 +39,7 @@ func NewIDGenerator(workerID uint64, baseTime time.Time) IDGenerator {
 }
 
 // Generate generate unique id
-func (g *IceFlakeGenerator) Generate() (uint64, error) {
+func (g *DefaultGenerator) Generate() (uint64, error) {
 	g.gate.Lock()
 	defer g.gate.Unlock()
 
@@ -61,6 +57,6 @@ func (g *IceFlakeGenerator) Generate() (uint64, error) {
 }
 
 // GetTimeInt get uint value differ between now and epochtime
-func (g *IceFlakeGenerator) GetTimeInt() uint64 {
+func (g *DefaultGenerator) GetTimeInt() uint64 {
 	return uint64(foundation.InternalTimer.Now().Sub(g.baseTime).Round(time.Millisecond)) / uint64(time.Millisecond)
 }
