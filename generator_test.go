@@ -70,7 +70,7 @@ func TestIceFlakeGenerator_Generate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			g := IceFlakeGenerator{
+			g := DefaultGenerator{
 				w:        tt.fields.w,
 				baseTime: tt.fields.baseTime,
 				lastTS:   tt.fields.lastTS,
@@ -96,7 +96,7 @@ func TestNewIDGenerator(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want IDGenerator
+		want Generator
 	}{
 		{
 			name: "succeeded to make new generator",
@@ -104,7 +104,7 @@ func TestNewIDGenerator(t *testing.T) {
 				workerID: 1,
 				baseTime: time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
-			want: &IceFlakeGenerator{
+			want: &DefaultGenerator{
 				w:        1,
 				baseTime: time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC),
 				lastTS:   0,
@@ -114,8 +114,8 @@ func TestNewIDGenerator(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewIDGenerator(tt.args.workerID, tt.args.baseTime); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewIDGenerator() = %v, want %v", got, tt.want)
+			if got := New(tt.args.workerID, tt.args.baseTime); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("New() = %v, want %v", got, tt.want)
 			}
 		})
 	}

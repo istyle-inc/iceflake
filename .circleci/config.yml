@@ -16,6 +16,7 @@ jobs:
       - run: dep ensure -v
       - run: go vet ./...
       - run: go test -race -test.v ./...
+      - run: go test -race -cover -v -coverprofile=./iceflake.coverprofile github.com/istyle-inc/iceflake
       - run: go test -race -cover -v -coverprofile=./client.coverprofile github.com/istyle-inc/iceflake/client/iceflake
       - run: go test -race -cover -v -coverprofile=./app.coverprofile github.com/istyle-inc/iceflake/app
       - run: gover
