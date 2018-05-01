@@ -24,7 +24,7 @@ Also you can use through this package.
 So, execute
 
 ```
-go get -u github.com/istyle-inc/iceflake
+go get -u github.com/istyle-inc/iceflake/...
 ```
 
 and here's a client code example

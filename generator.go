@@ -19,8 +19,8 @@ const (
 	initialSequentialNumber = 1
 )
 
-// DefaultGenerator local implement of Generator
-type DefaultGenerator struct {
+// GeneratorService local implement of Generator
+type GeneratorService struct {
 	w        uint64
 	baseTime time.Time
 	lastTS   uint64
@@ -30,7 +30,7 @@ type DefaultGenerator struct {
 
 // New return new Generator instance
 func New(workerID uint64, baseTime time.Time) Generator {
-	return &DefaultGenerator{
+	return &GeneratorService{
 		w:        workerID,
 		baseTime: baseTime,
 		lastTS:   0,
@@ -39,7 +39,7 @@ func New(workerID uint64, baseTime time.Time) Generator {
 }
 
 // Generate generate unique id
-func (g *DefaultGenerator) Generate() (uint64, error) {
+func (g *GeneratorService) Generate() (uint64, error) {
 	g.gate.Lock()
 	defer g.gate.Unlock()
 
@@ -57,6 +57,6 @@ func (g *DefaultGenerator) Generate() (uint64, error) {
 }
 
 // GetTimeInt get uint value differ between now and epochtime
-func (g *DefaultGenerator) GetTimeInt() uint64 {
+func (g *GeneratorService) GetTimeInt() uint64 {
 	return uint64(foundation.InternalTimer.Now().Sub(g.baseTime).Round(time.Millisecond)) / uint64(time.Millisecond)
 }
