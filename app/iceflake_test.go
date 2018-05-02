@@ -45,7 +45,7 @@ func TestListen(t *testing.T) {
 	go ice.Listen(ctx)
 	<-ice.Preparing()
 
-	cli := ic.NewClient("unix", fp)
+	cli := ic.New("unix", fp)
 	result, err := cli.Get()
 	if err != nil {
 		t.Error("error: ", err)
@@ -75,7 +75,7 @@ func BenchmarkListen(b *testing.B) {
 	defer cancel()
 	go ice.Listen(ctx)
 	<-ice.Preparing()
-	cli := ic.NewClient("unix", fp)
+	cli := ic.New("unix", fp)
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {

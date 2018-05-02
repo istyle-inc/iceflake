@@ -28,8 +28,8 @@ type Option struct {
 type IceFlake struct {
 	// Listener instance of net.Listener implementation
 	net.Listener
-	// iceflake.Generator Implant IDGenerator
-	iceflake.Generator
+	// iceflake.GeneratorService Implant IDGeneratorService
+	iceflake.GeneratorService
 	preparing chan interface{}
 	baseTime  time.Time
 	option    *Option
@@ -46,11 +46,11 @@ func New(o *Option) (*IceFlake, error) {
 		return nil, err
 	}
 	return &IceFlake{
-		Listener:  l,
-		Generator: iceflake.New(o.WorkerID, o.BaseTime),
-		baseTime:  o.BaseTime,
-		option:    o,
-		preparing: make(chan interface{}),
+		Listener:         l,
+		GeneratorService: iceflake.New(o.WorkerID, o.BaseTime),
+		baseTime:         o.BaseTime,
+		option:           o,
+		preparing:        make(chan interface{}),
 	}, nil
 }
 

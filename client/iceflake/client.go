@@ -14,8 +14,8 @@ type Client struct {
 	addr       string
 }
 
-// NewClient returns new Client
-func NewClient(listenType, addr string) *Client {
+// New returns new Client
+func New(listenType, addr string) *Client {
 	return &Client{
 		listenType: listenType,
 		addr:       addr,

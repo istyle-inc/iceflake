@@ -45,7 +45,7 @@ func TestListen(t *testing.T) {
 	go ice.Listen(ctx)
 	<-ice.Preparing()
 
-	cli := NewClient("unix", fp)
+	cli := New("unix", fp)
 	result, err := cli.Get()
 	if err != nil {
 		t.Error("error: ", err)

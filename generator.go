@@ -8,8 +8,8 @@ import (
 	"github.com/istyle-inc/iceflake/foundation"
 )
 
-// Generator interface of generator generates each Unique ID
-type Generator interface {
+// GeneratorService interface of generator generates each Unique ID
+type GeneratorService interface {
 	Generate() (uint64, error)
 }
 
@@ -19,8 +19,8 @@ const (
 	initialSequentialNumber = 1
 )
 
-// GeneratorService local implement of Generator
-type GeneratorService struct {
+// Generator local implement of GeneratorService
+type Generator struct {
 	w        uint64
 	baseTime time.Time
 	lastTS   uint64
@@ -29,8 +29,8 @@ type GeneratorService struct {
 }
 
 // New return new Generator instance
-func New(workerID uint64, baseTime time.Time) Generator {
-	return &GeneratorService{
+func New(workerID uint64, baseTime time.Time) GeneratorService {
+	return &Generator{
 		w:        workerID,
 		baseTime: baseTime,
 		lastTS:   0,
@@ -39,7 +39,7 @@ func New(workerID uint64, baseTime time.Time) Generator {
 }
 
 // Generate generate unique id
-func (g *GeneratorService) Generate() (uint64, error) {
+func (g *Generator) Generate() (uint64, error) {
 	g.gate.Lock()
 	defer g.gate.Unlock()
 
@@ -57,6 +57,6 @@ func (g *GeneratorService) Generate() (uint64, error) {
 }
 
 // GetTimeInt get uint value differ between now and epochtime
-func (g *GeneratorService) GetTimeInt() uint64 {
+func (g *Generator) GetTimeInt() uint64 {
 	return uint64(foundation.InternalTimer.Now().Sub(g.baseTime).Round(time.Millisecond)) / uint64(time.Millisecond)
 }
