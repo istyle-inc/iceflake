@@ -46,6 +46,7 @@ func TestListen(t *testing.T) {
 	<-ice.Preparing()
 
 	cli := New("unix", fp)
+	cli.WithTimeout(5 * time.Millisecond)
 	result, err := cli.Get()
 	if err != nil {
 		t.Error("error: ", err)
