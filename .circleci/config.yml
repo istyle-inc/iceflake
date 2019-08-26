@@ -1,19 +1,37 @@
 version: 2
 jobs:
-  test:
-    docker:
-      - image: circleci/golang:1.10
-    working_directory: /go/src/github.com/istyle-inc/iceflake
+  checkout:
+    docker: &docker
+      - image: circleci/golang:1.12
+        environment:
+          GO111MODULE: "on"
     steps:
       - checkout
+      - restore_cache: &restore_cache
+          name: Restore go modules cache
+          keys:
+            - mod-{{ .Environment.COMMON_CACHE_KEY }}-{{ checksum "go.mod" }}
+      - run: &vendoring
+          name: Vendoring
+          command: go mod download
+      - save_cache: &save_cache
+          name: Save go modules cache
+          key: mod-{{ .Environment.COMMON_CACHE_KEY }}-{{ checksum "go.mod" }}
+          paths:
+            - /go/pkg/mod/cache
+  test:
+    docker: *docker
+    steps:
+      - checkout
+      - restore_cache: *restore_cache
+      - run: *vendoring
+      - save_cache: *save_cache
       - run: go get -u github.com/modocache/gover
-      - run: go get -u github.com/golang/lint/golint
+      - run: go get -u golang.org/x/lint/golint
       - run: go get -u github.com/axw/gocov/gocov
       - run: go get -u github.com/mattn/goveralls
       - run: test -z "$(gofmt -s -l . | tee /dev/stderr)"
       # Setup dep
-      - run: go get -u github.com/golang/dep/cmd/dep
-      - run: dep ensure -v
       - run: go vet ./...
       - run: go test -race -test.v ./...
       - run: go test -race -cover -v -coverprofile=./iceflake.coverprofile github.com/istyle-inc/iceflake
@@ -23,14 +41,14 @@ jobs:
       - run: goveralls -coverprofile=./gover.coverprofile -service=circle-ci -repotoken=$COVERALLS_TOKEN
 
   build:
-    docker:
-      - image: circleci/golang:1.10
+    docker: *docker
     working_directory: /go/src/github.com/istyle-inc/iceflake
     steps:
       - checkout
-      - run: go get -u github.com/golang/dep/cmd/dep
+      - restore_cache: *restore_cache
+      - run: *vendoring
+      - save_cache: *save_cache
       - run: go get -u github.com/goreleaser/goreleaser
-      - run: dep ensure -v
       - run: goreleaser --rm-dist
 
 workflows:

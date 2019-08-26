@@ -10,7 +10,6 @@ run:
 
 install-tools:
 	go get -u github.com/goreleaser/goreleaser
-	go get -u github.com/golang/dep/cmd/dep
 
 build:
 	goreleaser 
